@@ -5,6 +5,8 @@ import Link from "next/link";
 import AppHeader from "@/components/painting-order/AppHeader";
 import CartDropdown from "@/components/CartDropdown";
 import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 import { ShoppingCart, ArrowRight, Trash2, Plus, Minus } from "lucide-react";
 
 async function getCartItems(userId: string) {

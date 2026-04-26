@@ -4,6 +4,8 @@ import ProductGrid from "@/components/products/ProductGrid";
 import CategoryFilter from "@/components/products/CategoryFilter";
 import prisma from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Oil Paintings | Professional Art Collection",
   description: "Browse our collection of professionally crafted oil paintings. Choose from portraits, landscapes, abstracts, and more with custom sizing and framing options.",

@@ -2,6 +2,8 @@ import Link from "next/link";
 import Stripe from "stripe";
 import AppHeader from "@/components/painting-order/AppHeader";
 import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 import {
   getPaintingStyleLabel,
   normalizePaintingStylePreset,

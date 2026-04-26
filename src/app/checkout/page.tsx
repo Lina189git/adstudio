@@ -6,6 +6,8 @@ import AppHeader from "@/components/painting-order/AppHeader";
 import prisma from "@/lib/prisma";
 import CheckoutClient from "@/components/checkout/CheckoutClient";
 
+export const dynamic = "force-dynamic";
+
 type AuthSession = Session & { user: { id: string; email?: string | null; name?: string | null } };
 
 async function getCartItems(userId: string) {

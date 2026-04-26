@@ -2,6 +2,8 @@ import Link from "next/link";
 import AppHeader from "@/components/painting-order/AppHeader";
 import prisma from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Painting Gallery",
   description:

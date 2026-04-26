@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import AppHeader from "@/components/painting-order/AppHeader";
 import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 import {
   getCanvasSizeLabel,
   getFrameStyleLabel,
