@@ -329,7 +329,7 @@ export default function PaintingOrderStudio() {
                 Sign In to Get Started
               </Link>
               <p className="text-sm text-[#6b5d54]">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link href="/auth/signin" className="text-[#d4a574] hover:underline">
                   Sign up with Google
                 </Link>
