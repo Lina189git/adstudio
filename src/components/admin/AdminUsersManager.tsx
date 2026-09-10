@@ -28,7 +28,7 @@ interface Pagination {
   total: number;
 }
 
-const roleOptions = ["USER", "ADMIN", "VISITOR"];
+const roleOptions = ["USER", "ADMIN", "ARTIST", "VISITOR"];
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-US", {

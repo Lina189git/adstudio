@@ -15,6 +15,7 @@ import {
   MonitorUp,
   ShoppingCart,
   Square,
+  Star,
   StretchHorizontal,
 } from "lucide-react";
 import { getCanvasSizeLabel, getFrameStyleLabel } from "@/lib/paintingOrder";
@@ -215,17 +216,17 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div
-      className="group relative overflow-visible rounded-[1.75rem] border-2 border-[#eadfcb] bg-white shadow-[0_10px_30px_rgba(26,22,20,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(26,22,20,0.12)]"
+      className="group relative overflow-visible rounded-[1.75rem] border-2 border-[#eadfcb] bg-white shadow-[0_10px_30px_rgba(26,22,20,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-[#d4a574] hover:shadow-[0_20px_50px_rgba(26,22,20,0.12)]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {product.isFeatured ? (
-        <div className="absolute left-4 top-4 z-10 rounded-full bg-[#1a1614] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white">
+        <div className="absolute left-4 top-4 z-10 rounded-full bg-[#d4a574] px-3 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-md">
           Featured
         </div>
       ) : null}
 
-      <Link href={`/products/${product.slug}`} className="relative block aspect-square overflow-hidden">
+      <Link href={`/products/${product.slug}`} className="relative block aspect-[4/3] overflow-hidden rounded-t-[1.6rem]">
         <Image
           src={getSafeImageSrc(
             product.imageUrl ||
@@ -234,18 +235,19 @@ export default function ProductCard({ product }: ProductCardProps) {
           alt={product.name}
           fill
           sizes="(min-width: 1280px) 320px, (min-width: 768px) 50vw, 100vw"
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
         {isHovered ? (
-          <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#1a1614] transition-colors hover:bg-[#f8f1e6]">
+          <div className="absolute inset-0 flex items-center justify-center gap-2.5 bg-black/35 backdrop-blur-[1px]">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-[#1a1614] shadow-lg transition-colors hover:bg-[#f8f1e6]">
               <Eye className="h-5 w-5" />
             </span>
             <button
               type="button"
               onClick={(event) => event.preventDefault()}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#1a1614] transition-colors hover:bg-[#f8f1e6]"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-[#1a1614] shadow-lg transition-colors hover:bg-[#f8f1e6]"
             >
               <Heart className="h-5 w-5" />
             </button>
@@ -253,12 +255,23 @@ export default function ProductCard({ product }: ProductCardProps) {
         ) : null}
       </Link>
 
-      <div className="space-y-2.5 p-3.5">
+      <div className="space-y-2.5 p-4">
         <div>
-          <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6b5d54]">
-            {product.category.name}
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#a87945]">
+              {product.category.name}
+            </span>
+            {/* Static star rating */}
+            <div className="flex items-center gap-1">
+              <div className="flex gap-0.5">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star key={i} className="h-3 w-3 fill-[#d4a574] text-[#d4a574]" />
+                ))}
+              </div>
+              <span className="text-[10px] font-semibold text-[#8c7764]">4.9</span>
+            </div>
           </div>
-          <h3 className="text-base font-bold text-[#1a1614]">
+          <h3 className="font-serif text-base font-bold text-[#1a1614]">
             <Link href={`/products/${product.slug}`} className="transition-colors hover:text-[#d4a574]">
               {product.name}
             </Link>

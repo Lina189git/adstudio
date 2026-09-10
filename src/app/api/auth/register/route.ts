@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         name,
         email,
         password: hashedPassword,
-        role: email === "admin@oilpaint.com" ? "ADMIN" : "USER",
+        role: email === "admin@oilpaint.com" ? "ADMIN" : "INFLUENCER",
       },
       select: {
         id: true,

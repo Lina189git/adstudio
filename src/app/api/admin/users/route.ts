@@ -6,7 +6,7 @@ import {
   unauthorizedAdminResponse,
 } from "@/lib/admin";
 
-const ALLOWED_ROLES = new Set<UserRole>(["USER", "ADMIN", "VISITOR"]);
+const ALLOWED_ROLES = new Set<UserRole>(["USER", "ADMIN", "ARTIST", "VISITOR"]);
 
 export async function GET(request: NextRequest) {
   try {

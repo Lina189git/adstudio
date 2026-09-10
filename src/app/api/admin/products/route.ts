@@ -96,6 +96,11 @@ export async function POST(request: NextRequest) {
       isFeatured,
       stockQuantity,
       variants,
+      commissionType,
+      commissionRate,
+      commissionFixed,
+      sampleStock,
+      taskRequirements,
     } = body;
 
     // Validate required fields
@@ -145,6 +150,11 @@ export async function POST(request: NextRequest) {
         isActive: isActive !== false,
         isFeatured: isFeatured || false,
         stockQuantity: stockQuantity || 0,
+        commissionType: commissionType || "PERCENTAGE",
+        commissionRate: commissionRate !== undefined ? commissionRate : 0.10,
+        commissionFixed: commissionFixed !== undefined ? commissionFixed : 0,
+        sampleStock: sampleStock !== undefined ? sampleStock : 0,
+        taskRequirements: taskRequirements || null,
         variants: {
           create: normalizedVariants.map((variant) => ({
             name: variant.name,

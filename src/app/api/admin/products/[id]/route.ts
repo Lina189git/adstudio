@@ -74,6 +74,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       isFeatured,
       stockQuantity,
       variants,
+      commissionType,
+      commissionRate,
+      commissionFixed,
+      sampleStock,
+      taskRequirements,
     } = body;
 
     // Check if product exists
@@ -141,6 +146,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           ...(isActive !== undefined && { isActive }),
           ...(isFeatured !== undefined && { isFeatured }),
           ...(stockQuantity !== undefined && { stockQuantity }),
+          ...(commissionType !== undefined && { commissionType }),
+          ...(commissionRate !== undefined && { commissionRate }),
+          ...(commissionFixed !== undefined && { commissionFixed }),
+          ...(sampleStock !== undefined && { sampleStock }),
+          ...(taskRequirements !== undefined && { taskRequirements }),
         },
       });
 

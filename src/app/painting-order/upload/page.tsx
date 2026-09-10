@@ -1,5 +1,5 @@
-import PaintingOrderStudio from "@/components/painting-order/PaintingOrderStudio";
+import { redirect } from "next/navigation";
 
 export default function PaintingOrderUploadPage() {
-  return <PaintingOrderStudio />;
+  redirect("/gallery");
 }

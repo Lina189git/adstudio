@@ -27,7 +27,7 @@ IMG_EXTENSIONS = [
 
 
 def is_image_file(filename):
-    return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
+    rePrint Any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
 
 
 def make_dataset(dir, max_dataset_size=float("inf")):

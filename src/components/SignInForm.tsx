@@ -2,262 +2,213 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { Chrome, Mail, Eye, EyeOff } from "lucide-react";
+import { CheckCircle2, Eye, EyeOff, Loader2, TrendingUp } from "lucide-react";
 
-export default function SignInForm() {
-  const [isSignUp, setIsSignUp] = useState(false);
+type Mode = "signin" | "signup";
+
+export default function SignInForm({ initialMode = "signin" }: { initialMode?: Mode }) {
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [registrationUserId, setRegistrationUserId] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const router = useRouter();
+  const [success, setSuccess] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
 
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm((p) => ({ ...p, [k]: e.target.value }));
+
+  const switchMode = (m: Mode) => {
+    setMode(m);
     setError("");
-    setRegistrationUserId("");
-
-    try {
-      const result = await signIn("google", {
-        callbackUrl: "/",
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError("Failed to sign in. Please try again.");
-      } else if (result?.url) {
-        router.push(result.url);
-      } else {
-        router.push("/");
-      }
-    } catch {
-      setError("An unexpected error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    setSuccess("");
+    setForm({ name: "", email: "", password: "" });
   };
 
-  const handleEmailAuth = async (e: React.FormEvent) => {
+  const handleGoogle = async () => {
+    setLoading(true);
+    setError("");
+    await signIn("google", { callbackUrl: "/auth/redirect" });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setRegistrationUserId("");
+    setSuccess("");
 
     try {
-      if (isSignUp) {
-        // Registration
-        const response = await fetch("/api/auth/register", {
+      if (mode === "signup") {
+        const res = await fetch("/api/auth/register", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
         });
+        const data = await res.json();
+        if (!res.ok) { setError(data.error || "Registration failed."); return; }
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          setError(data.error || "Registration failed");
-          return;
-        }
-
-        if (data.userId) {
-          setRegistrationUserId(data.userId);
-        }
-
-        // After successful registration, sign in
         const result = await signIn("credentials", {
-          email: formData.email,
-          password: formData.password,
-          callbackUrl: "/account?welcome=1",
+          email: form.email,
+          password: form.password,
           redirect: false,
         });
-
         if (result?.error) {
-          setError(
-            `Registration successful${data.userId ? ` (User ID: ${data.userId})` : ""}, but sign in failed. Please try signing in.`
-          );
+          setSuccess("Account created! Sign in below.");
+          switchMode("signin");
         } else {
-          router.push(result?.url || "/account?welcome=1");
+          window.location.href = "/auth/redirect";
         }
       } else {
-        // Sign in
         const result = await signIn("credentials", {
-          email: formData.email,
-          password: formData.password,
-          callbackUrl: "/",
+          email: form.email,
+          password: form.password,
           redirect: false,
         });
-
         if (result?.error) {
-          setError("Invalid email or password");
+          setError("Incorrect email or password.");
         } else {
-          router.push("/");
+          window.location.href = "/auth/redirect";
         }
       }
     } catch {
-      setError("An unexpected error occurred. Please try again.");
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
-  };
-
   return (
-    <div className="bg-white rounded-[1.75rem] border-2 border-[#eadfcb] p-8 shadow-[0_10px_30px_rgba(26,22,20,0.06)]">
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-          {error}
-        </div>
-      )}
+    <div className="w-full space-y-5">
+      {/* Tab switcher */}
+      <div className="flex rounded-2xl border border-[#eadfcb] bg-[#faf6ef] p-1">
+        {(["signin", "signup"] as Mode[]).map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => switchMode(m)}
+            className={`flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all ${
+              mode === m
+                ? "bg-white shadow-sm text-[#1a1614]"
+                : "text-[#8c7764] hover:text-[#1a1614]"
+            }`}
+          >
+            {m === "signin" ? "Sign in" : "Create account"}
+          </button>
+        ))}
+      </div>
 
-      {registrationUserId && !error ? (
-        <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
-          Account created successfully. Your user ID is <span className="font-semibold">{registrationUserId}</span>.
-        </div>
-      ) : null}
-
-      {/* Google Sign In */}
+      {/* Google */}
       <button
-        onClick={handleGoogleSignIn}
+        type="button"
+        onClick={handleGoogle}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-3 bg-white border-2 border-[#eadfcb] text-[#1a1614] px-6 py-3 rounded-lg hover:bg-[#f8f1e6] transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-6"
+        className="flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-[#eadfcb] bg-white px-5 py-3.5 text-sm font-semibold text-[#1a1614] transition hover:border-[#d4a574] hover:bg-[#fdf8f1] disabled:opacity-50"
       >
-        <Chrome className="w-5 h-5" />
-        <span className="font-semibold">
-          {loading ? "Signing in..." : "Continue with Google"}
-        </span>
+        {/* Google SVG */}
+        <svg className="h-4 w-4" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Continue with Google
       </button>
 
       {/* Divider */}
-      <div className="relative mb-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-[#eadfcb]"></div>
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-[#6b5d54]">Or continue with email</span>
-        </div>
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-[#eadfcb]" />
+        <span className="text-xs font-semibold uppercase tracking-[0.15em] text-[#a89a8e]">or</span>
+        <div className="h-px flex-1 bg-[#eadfcb]" />
       </div>
 
-      {/* Email/Password Form */}
-      <form onSubmit={handleEmailAuth} className="space-y-4">
-        {isSignUp && (
+      {/* Alerts */}
+      {error && (
+        <div className="flex items-start gap-2.5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-red-200 text-[10px] font-bold text-red-700">!</span>
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="flex items-start gap-2.5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+          {success}
+        </div>
+      )}
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {mode === "signup" && (
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-[#1a1614] mb-2">
-              Full Name
-            </label>
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#6b5d54]">Full name</label>
             <input
               type="text"
-              id="name"
               name="name"
-              value={formData.name}
-              onChange={handleInputChange}
+              value={form.name}
+              onChange={set("name")}
               required
-              className="w-full px-4 py-3 border border-[#eadfcb] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4a574] bg-[#faf6ef]"
-              placeholder="Enter your full name"
+              placeholder="Your name"
+              className="w-full rounded-2xl border border-[#eadfcb] bg-[#faf6ef] px-4 py-3 text-sm text-[#1a1614] outline-none placeholder:text-[#c0b4aa] transition focus:border-[#d4a574] focus:ring-2 focus:ring-[#d4a574]/15"
             />
           </div>
         )}
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[#1a1614] mb-2">
-            Email Address
-          </label>
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#6b5d54]">Email address</label>
           <input
             type="email"
-            id="email"
             name="email"
-            value={formData.email}
-            onChange={handleInputChange}
+            value={form.email}
+            onChange={set("email")}
             required
-            className="w-full px-4 py-3 border border-[#eadfcb] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4a574] bg-[#faf6ef]"
-            placeholder="Enter your email"
+            placeholder="you@example.com"
+            className="w-full rounded-2xl border border-[#eadfcb] bg-[#faf6ef] px-4 py-3 text-sm text-[#1a1614] outline-none placeholder:text-[#c0b4aa] transition focus:border-[#d4a574] focus:ring-2 focus:ring-[#d4a574]/15"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-[#1a1614] mb-2">
-            Password
-          </label>
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#6b5d54]">Password</label>
           <div className="relative">
             <input
-              type={showPassword ? "text" : "password"}
-              id="password"
+              type={showPw ? "text" : "password"}
               name="password"
-              value={formData.password}
-              onChange={handleInputChange}
+              value={form.password}
+              onChange={set("password")}
               required
               minLength={6}
-              className="w-full px-4 py-3 pr-12 border border-[#eadfcb] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4a574] bg-[#faf6ef]"
-              placeholder={isSignUp ? "Create a password (min 6 characters)" : "Enter your password"}
+              placeholder={mode === "signup" ? "At least 6 characters" : "Your password"}
+              className="w-full rounded-2xl border border-[#eadfcb] bg-[#faf6ef] px-4 py-3 pr-11 text-sm text-[#1a1614] outline-none placeholder:text-[#c0b4aa] transition focus:border-[#d4a574] focus:ring-2 focus:ring-[#d4a574]/15"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6b5d54] hover:text-[#1a1614]"
-            >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            <button type="button" tabIndex={-1} onClick={() => setShowPw((v) => !v)} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#a89a8e] hover:text-[#1a1614]">
+              {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
         </div>
 
+        {/* Influencer notice on signup */}
+        {mode === "signup" && (
+          <div className="flex items-start gap-2.5 rounded-2xl border border-[#eadfcb] bg-[#fdf8f1] px-4 py-3">
+            <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-[#d4a574]" />
+            <p className="text-xs text-[#6b5d54]">
+              Your account will be set up as an <span className="font-semibold text-[#1a1614]">influencer / creator</span> — you can apply for products and earn commission immediately.
+            </p>
+          </div>
+        )}
+
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 bg-[#1a1614] text-white px-6 py-3 rounded-lg hover:bg-[#2a2624] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1a1614] py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-[#2a2624] hover:shadow-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <Mail className="w-5 h-5" />
-          <span className="font-semibold">
-            {loading
-              ? (isSignUp ? "Creating account..." : "Signing in...")
-              : (isSignUp ? "Create Account" : "Sign In")
-            }
-          </span>
+          {loading
+            ? <><Loader2 className="h-4 w-4 animate-spin" />{mode === "signup" ? "Creating account…" : "Signing in…"}</>
+            : mode === "signup" ? "Create influencer account" : "Sign in"}
         </button>
       </form>
 
-      {/* Toggle between sign in and sign up */}
-      <div className="mt-6 text-center">
-        <button
-          onClick={() => {
-            setIsSignUp(!isSignUp);
-            setError("");
-            setRegistrationUserId("");
-            setFormData({ name: "", email: "", password: "" });
-          }}
-          className="text-[#d4a574] hover:underline text-sm"
-        >
-          {isSignUp
-            ? "Already have an account? Sign in"
-            : "Don't have an account? Sign up"
-          }
-        </button>
-      </div>
-
-      <div className="mt-6 text-center">
-        <p className="text-sm text-[#6b5d54]">
-          By {isSignUp ? "signing up" : "signing in"}, you agree to our{" "}
-          <a href="/terms" className="text-[#d4a574] hover:underline">
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a href="/privacy" className="text-[#d4a574] hover:underline">
-            Privacy Policy
-          </a>
-        </p>
-      </div>
+      <p className="text-center text-xs text-[#a89a8e]">
+        By continuing you agree to our{" "}
+        <a href="/terms" className="text-[#d4a574] hover:underline">Terms</a> and{" "}
+        <a href="/privacy" className="text-[#d4a574] hover:underline">Privacy Policy</a>.
+      </p>
     </div>
   );
 }

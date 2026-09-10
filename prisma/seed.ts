@@ -306,6 +306,140 @@ async function main() {
     console.log(`✓ Created demo painting: ${result.galleryTitle} (${result.reference})`);
   }
 
+  // ── Commission requests (mock data for admin assignment flow) ─────────────
+
+  console.log("Seeding commission requests...");
+
+  // Clear old commissions so seeding is idempotent
+  await prisma.workUpdate.deleteMany();
+  await prisma.commissionRequest.deleteMany({ where: { reference: { startsWith: "ART-DEMO-" } } });
+
+  const commissionData = [
+    {
+      reference:    "ART-DEMO-001",
+      customerName: "Sophie Williams",
+      email:        "sophie.williams@example.com",
+      phone:        "+1 (555) 234-5678",
+      paintingType: "portrait",
+      size:         "medium",
+      surface:      "canvas",
+      style:        "impressionist",
+      quantity:     "1",
+      deadline:     "2026-08-15",
+      budget:       "$300–$500",
+      deliveryCity: "New York, NY",
+      notes:        "Family portrait of my parents on their 40th anniversary. Warm tones preferred.",
+      referenceImageUrls: [],
+      estimatedRange: "$270 – $365",
+      timeline:     "10 – 14 business days",
+      status:       "PENDING" as const,
+    },
+    {
+      reference:    "ART-DEMO-002",
+      customerName: "James Chen",
+      email:        "james.chen@example.com",
+      phone:        "+1 (555) 345-6789",
+      paintingType: "landscape",
+      size:         "large",
+      surface:      "canvas",
+      style:        "monet",
+      quantity:     "1",
+      deadline:     "2026-09-01",
+      budget:       "$600–$900",
+      deliveryCity: "San Francisco, CA",
+      notes:        "Impressionist style landscape of Yosemite Valley. Capturing the golden hour light.",
+      referenceImageUrls: [],
+      estimatedRange: "$396 – $535",
+      timeline:     "14 – 21 business days",
+      status:       "QUOTED" as const,
+    },
+    {
+      reference:    "ART-DEMO-003",
+      customerName: "Maria Rossi",
+      email:        "maria.rossi@example.com",
+      phone:        "+1 (555) 456-7890",
+      paintingType: "pet",
+      size:         "small",
+      surface:      "canvas",
+      style:        "realism",
+      quantity:     "1",
+      deadline:     "2026-07-20",
+      budget:       "$150–$250",
+      deliveryCity: "Chicago, IL",
+      notes:        "Portrait of my golden retriever Max. He loves to play outdoors.",
+      referenceImageUrls: [],
+      estimatedRange: "$160 – $216",
+      timeline:     "7 – 10 business days",
+      status:       "APPROVED" as const,
+    },
+    {
+      reference:    "ART-DEMO-004",
+      customerName: "David Park",
+      email:        "david.park@example.com",
+      phone:        "+1 (555) 567-8901",
+      paintingType: "interior",
+      size:         "large",
+      surface:      "linen",
+      style:        "contemporary",
+      quantity:     "2",
+      deadline:     "2026-08-30",
+      budget:       "$800–$1200",
+      deliveryCity: "Seattle, WA",
+      notes:        "Two matching paintings for living room. Abstract interpretation of the Pacific Northwest forest.",
+      referenceImageUrls: [],
+      estimatedRange: "$1080 – $1458",
+      timeline:     "14 – 21 business days",
+      status:       "APPROVED" as const,
+    },
+    {
+      reference:    "ART-DEMO-005",
+      customerName: "Emma Thompson",
+      email:        "emma.thompson@example.com",
+      phone:        "+1 (555) 678-9012",
+      paintingType: "custom",
+      size:         "medium",
+      surface:      "canvas",
+      style:        "watercolor",
+      quantity:     "1",
+      deadline:     "2026-07-01",
+      budget:       "$200–$400",
+      deliveryCity: "Austin, TX",
+      notes:        "Wedding gift for my sister — she loves gardens and florals. Soft pastel palette.",
+      referenceImageUrls: [],
+      estimatedRange: "$351 – $474",
+      timeline:     "10 – 14 business days",
+      status:       "PENDING" as const,
+    },
+    {
+      reference:    "ART-DEMO-006",
+      customerName: "Robert Kim",
+      email:        "robert.kim@example.com",
+      phone:        "+1 (555) 789-0123",
+      paintingType: "portrait",
+      size:         "large",
+      surface:      "canvas",
+      style:        "classical",
+      quantity:     "1",
+      deadline:     "2026-09-15",
+      budget:       "$700–$1000",
+      deliveryCity: "Boston, MA",
+      notes:        "Executive portrait for office lobby. Professional attire, neutral background.",
+      referenceImageUrls: [],
+      estimatedRange: "$396 – $535",
+      timeline:     "14 – 21 business days",
+      status:       "QUOTED" as const,
+    },
+  ];
+
+  for (const c of commissionData) {
+    await prisma.commissionRequest.upsert({
+      where:  { reference: c.reference },
+      update: c,
+      create: c,
+    });
+    console.log(`✓ Commission: ${c.reference} — ${c.customerName} (${c.status})`);
+  }
+
   console.log("✓ Seeding completed successfully!");
 }
 

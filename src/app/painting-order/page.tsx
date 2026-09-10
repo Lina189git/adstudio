@@ -1,5 +1,5 @@
-import PaintingOrderPage from "@/components/painting-order/PaintingOrderPage";
+import { redirect } from "next/navigation";
 
 export default function PaintingOrderEntryPage() {
-  return <PaintingOrderPage />;
+  redirect("/");
 }
