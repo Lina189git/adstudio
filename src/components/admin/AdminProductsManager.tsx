@@ -3,20 +3,8 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ImagePlus, Loader2, Pencil, Plus, RefreshCw, Trash2, UploadCloud } from "lucide-react";
-import { getCanvasSizeLabel, getFrameStyleLabel } from "@/lib/paintingOrder";
 
 type Category = { id: string; name: string; slug: string };
-type Frame = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  imageUrl: string | null;
-  availableSizes: string[];
-  priceCents: number;
-  isActive: boolean;
-  sortOrder: number;
-};
 type Product = {
   id: string;
   name: string;
@@ -30,7 +18,6 @@ type Product = {
   isFeatured: boolean;
   stockQuantity: number;
   category: Category;
-  variants: Array<{ id: string; name?: string | null; canvasSize: string; frameStyle: string; previewImageUrl: string | null; details: string | null; priceCents: number; stockQuantity: number; isActive: boolean }>;
 };
 type Stats = { total: number; featured: number; inactive: number };
 type Pagination = { page: number; pages: number; total: number };
@@ -79,22 +66,6 @@ export default function AdminProductsManager() {
   const [success, setSuccess] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
-  const [frames, setFrames] = useState<Frame[]>([]);
-  const [frameLoading, setFrameLoading] = useState(true);
-  const [frameError, setFrameError] = useState("");
-  const [frameSuccess, setFrameSuccess] = useState("");
-
-  const loadFrames = async () => {
-    setFrameLoading(true);
-    try {
-      const res = await fetch("/api/admin/frames?includeInactive=true");
-      const data = await res.json();
-      setFrames(data.frames || []);
-    } finally {
-      setFrameLoading(false);
-    }
-  };
-
   const loadCategories = async () => {
     try {
       const res = await fetch("/api/admin/categories");
@@ -128,7 +99,7 @@ export default function AdminProductsManager() {
     }
   }, [categoryFilter, search]);
 
-  useEffect(() => { void Promise.all([loadCategories(), loadStats(), loadProducts(1), loadFrames()]); }, [loadProducts]);
+  useEffect(() => { void Promise.all([loadCategories(), loadStats(), loadProducts(1)]); }, [loadProducts]);
   useEffect(() => {
     const timer = window.setTimeout(() => { void loadProducts(1); }, 250);
     return () => window.clearTimeout(timer);
@@ -245,15 +216,6 @@ export default function AdminProductsManager() {
     await Promise.all([loadProducts(pagination.page), loadStats()]);
   };
 
-  const removeFrame = async (frameId: string) => {
-    if (!window.confirm("Delete this frame style? This cannot be undone.")) return;
-    const res = await fetch(`/api/admin/frames/${frameId}`, { method: "DELETE" });
-    const data = await res.json();
-    if (!res.ok) return setFrameError(data.error || "Failed to delete frame.");
-    setFrameSuccess("Frame deleted.");
-    await loadFrames();
-  };
-
   return (
     <div className="space-y-8">
       {/* Stats row */}
@@ -310,11 +272,7 @@ export default function AdminProductsManager() {
                     <div className="text-sm text-[#1a1614]">{product.category.name}</div>
                     <div className="space-y-1 text-xs text-[#6b5d54]">
                       <div className="font-semibold text-[#1a1614]">{money(product.basePriceCents)}</div>
-                      <div>{product.variants.length} variants</div>
                       <div>{product.galleryImages?.length || 0} gallery images</div>
-                      {product.variants.slice(0, 2).map((variant) => (
-                        <div key={variant.id}>{getCanvasSizeLabel(variant.canvasSize)} / {getFrameStyleLabel(variant.frameStyle)}</div>
-                      ))}
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <button type="button" onClick={() => editProduct(product)} className="inline-flex items-center gap-2 rounded-full border border-[#eadfcb] px-3 py-2 text-xs font-semibold text-[#1a1614] transition hover:bg-[#f8f1e6]"><Pencil className="h-3.5 w-3.5" />Edit</button>
@@ -472,52 +430,6 @@ export default function AdminProductsManager() {
         </div>
       </div>
 
-      {/* Frame Styles — read-only list */}
-      <div className="rounded-[1.75rem] border border-[#eadfcb] bg-white p-6 shadow-[0_10px_35px_rgba(26,22,20,0.05)]">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-[#1a1614]">Frame Styles</h2>
-            <p className="mt-1 text-sm text-[#6b5d54]">Frame options available in the product configurator and storefront.</p>
-          </div>
-          <button type="button" onClick={() => void loadFrames()} className="inline-flex items-center gap-2 rounded-full border border-[#eadfcb] px-4 py-2 text-sm font-semibold text-[#1a1614] transition hover:bg-[#f8f1e6]"><RefreshCw className="h-4 w-4" />Refresh</button>
-        </div>
-        {frameError ? <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{frameError}</div> : null}
-        {frameSuccess ? <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{frameSuccess}</div> : null}
-        <div className="mt-6 overflow-hidden rounded-[1.25rem] border border-[#eadfcb]">
-          {frameLoading ? (
-            <div className="flex items-center justify-center gap-3 px-6 py-12 text-sm text-[#6b5d54]"><Loader2 className="h-4 w-4 animate-spin" />Loading frame styles...</div>
-          ) : frames.length === 0 ? (
-            <div className="px-6 py-10 text-center text-sm text-[#6b5d54]">No frame styles yet.</div>
-          ) : (
-            <div className="divide-y divide-[#eadfcb]">
-              {frames.map((frame) => (
-                <div key={frame.id} className="flex items-center gap-4 px-5 py-4">
-                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-[#eadfcb] bg-[#faf6ef]">
-                    <ProductImage src={frame.imageUrl} alt={frame.name} sizes="64px" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-[#1a1614]">{frame.name}</p>
-                      {!frame.isActive && <span className="rounded-full bg-[#f8f1e6] px-2 py-0.5 text-xs font-semibold text-[#8c7764]">Inactive</span>}
-                    </div>
-                    <p className="mt-0.5 text-xs uppercase tracking-[0.18em] text-[#8c7764]">{frame.slug}</p>
-                    {frame.description ? <p className="mt-1 text-sm text-[#6b5d54] line-clamp-1">{frame.description}</p> : null}
-                    <div className="mt-1.5 flex flex-wrap gap-1">
-                      {frame.availableSizes.map((size) => (
-                        <span key={size} className="rounded-full border border-[#eadfcb] bg-[#faf6ef] px-2 py-0.5 text-xs text-[#6b5d54]">{size}</span>
-                      ))}
-                      <span className="rounded-full border border-[#eadfcb] bg-[#faf6ef] px-2 py-0.5 text-xs font-medium text-[#1a1614]">{money(frame.priceCents)} add-on</span>
-                    </div>
-                  </div>
-                  <button type="button" onClick={() => void removeFrame(frame.id)} className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-50">
-                    <Trash2 className="h-3.5 w-3.5" />Delete
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
