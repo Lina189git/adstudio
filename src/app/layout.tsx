@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   },
   description:
     "Connect brands with talented video creators. Influencers apply for free product samples, create authentic ad videos, and earn commission. Brands get real content.",
+  other: {
+    "google": "notranslate",
+  },
   openGraph: {
     type: "website",
     siteName: "AdStudio",
