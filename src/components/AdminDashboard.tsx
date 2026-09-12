@@ -115,6 +115,25 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
+      {/* Quick actions — top of page */}
+      <div className="rounded-[1.75rem] border border-[#eadfcb] bg-white p-6 shadow-[0_6px_24px_rgba(26,22,20,0.05)]">
+        <h2 className="mb-4 text-lg font-bold text-[#1a1614]">Quick actions</h2>
+        <div className="flex flex-wrap gap-3">
+          {[
+            { label: "Add new product",       href: "/admin/products" },
+            { label: "Pending applications",  href: "/admin/applications?status=PENDING" },
+            { label: "Videos to review",      href: "/admin/videos?status=PENDING_REVIEW" },
+            { label: "Active tasks",          href: "/admin/tasks?status=ACTIVE" },
+            { label: "Manage users",          href: "/admin/users" },
+            { label: "Public gallery",        href: "/gallery" },
+          ].map(({ label, href }) => (
+            <Link key={href} href={href} className="rounded-full border border-[#eadfcb] bg-[#faf6ef] px-4 py-2 text-sm font-semibold text-[#1a1614] transition hover:bg-[#f0e8d8]">
+              {label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* Stats grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {statCards.map((card) => (
@@ -157,25 +176,6 @@ export default function AdminDashboard() {
               <p className="mt-2 text-sm font-bold text-[#1a1614]">{s.title}</p>
               <p className="mt-1 text-xs text-[#6b5d54]">{s.desc}</p>
               <p className="mt-3 text-xs font-semibold text-[#d4a574] group-hover:text-[#c49464]">{s.cta} →</p>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Quick links */}
-      <div className="rounded-[1.75rem] border border-[#eadfcb] bg-white p-6 shadow-[0_6px_24px_rgba(26,22,20,0.05)]">
-        <h2 className="mb-4 text-lg font-bold text-[#1a1614]">Quick actions</h2>
-        <div className="flex flex-wrap gap-3">
-          {[
-            { label: "Add new product", href: "/admin/products" },
-            { label: "Pending applications", href: "/admin/applications?status=PENDING" },
-            { label: "Videos to review", href: "/admin/videos?status=PENDING_REVIEW" },
-            { label: "Active tasks", href: "/admin/tasks?status=ACTIVE" },
-            { label: "Manage users", href: "/admin/users" },
-            { label: "Public gallery", href: "/gallery" },
-          ].map(({ label, href }) => (
-            <Link key={href} href={href} className="rounded-full border border-[#eadfcb] bg-[#faf6ef] px-4 py-2 text-sm font-semibold text-[#1a1614] transition hover:bg-[#f0e8d8]">
-              {label}
             </Link>
           ))}
         </div>
