@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { requireInfluencerApiSession, unauthorizedInfluencerResponse } from "@/lib/influencer";
+
+export const dynamic = "force-dynamic";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -9,7 +11,7 @@ cloudinary.config({
   timeout: 60_000,
 });
 
-// POST /api/influencer/upload — upload thumbnail or video file
+// POST /api/influencer/upload â€” upload thumbnail or video file
 export async function POST(request: NextRequest) {
   const session = await requireInfluencerApiSession();
   if (!session) return unauthorizedInfluencerResponse();

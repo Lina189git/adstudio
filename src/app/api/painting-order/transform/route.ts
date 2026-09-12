@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import {
   getPaintingStyleLabel,
@@ -6,6 +6,8 @@ import {
   normalizePaintingStylePreset,
 } from "@/lib/paintingOrder";
 import {
+
+export const dynamic = "force-dynamic";
   describePaintingServiceFailure,
   getPaintingServiceUrl,
   getPaintingSourceFetchTimeoutMs,

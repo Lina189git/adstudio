@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireInfluencerApiSession, unauthorizedInfluencerResponse } from "@/lib/influencer";
 
-// GET /api/influencer/tasks — list my ad tasks
+export const dynamic = "force-dynamic";
+
+// GET /api/influencer/tasks â€” list my ad tasks
 export async function GET() {
   const session = await requireInfluencerApiSession();
   if (!session) return unauthorizedInfluencerResponse();

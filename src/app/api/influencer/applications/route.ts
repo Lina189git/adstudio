@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireInfluencerApiSession, unauthorizedInfluencerResponse } from "@/lib/influencer";
 
-// GET /api/influencer/applications — list my applications
+export const dynamic = "force-dynamic";
+
+// GET /api/influencer/applications â€” list my applications
 export async function GET() {
   const session = await requireInfluencerApiSession();
   if (!session) return unauthorizedInfluencerResponse();
@@ -21,7 +23,7 @@ export async function GET() {
   return NextResponse.json({ applications });
 }
 
-// POST /api/influencer/applications — submit a new application
+// POST /api/influencer/applications â€” submit a new application
 export async function POST(request: NextRequest) {
   const session = await requireInfluencerApiSession();
   if (!session) return unauthorizedInfluencerResponse();

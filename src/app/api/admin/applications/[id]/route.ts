@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireAdminApiSession, unauthorizedAdminResponse } from "@/lib/admin";
 
-// PUT /api/admin/applications/[id] — approve, reject, or update application
+export const dynamic = "force-dynamic";
+
+// PUT /api/admin/applications/[id] â€” approve, reject, or update application
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }

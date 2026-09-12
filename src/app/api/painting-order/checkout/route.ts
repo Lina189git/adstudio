@@ -1,9 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getServerSession } from "next-auth/next";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import {
+
+export const dynamic = "force-dynamic";
   CANVAS_SIZE_OPTIONS,
   CanvasSize,
   FRAME_STYLE_OPTIONS,

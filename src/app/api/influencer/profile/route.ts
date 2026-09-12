@@ -1,10 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireInfluencerApiSession, unauthorizedInfluencerResponse } from "@/lib/influencer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-// GET /api/influencer/profile — get current influencer's profile
+export const dynamic = "force-dynamic";
+
+// GET /api/influencer/profile â€” get current influencer's profile
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
@@ -14,7 +16,7 @@ export async function GET() {
   return NextResponse.json({ profile });
 }
 
-// PUT /api/influencer/profile — create or update influencer profile
+// PUT /api/influencer/profile â€” create or update influencer profile
 export async function PUT(request: NextRequest) {
   const session = await requireInfluencerApiSession();
   if (!session) return unauthorizedInfluencerResponse();

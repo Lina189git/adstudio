@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireInfluencerApiSession, unauthorizedInfluencerResponse } from "@/lib/influencer";
+
+export const dynamic = "force-dynamic";
 
 // GET /api/influencer/tasks/[id]
 export async function GET(

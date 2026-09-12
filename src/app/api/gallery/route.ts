@@ -1,7 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-// GET /api/gallery — public product listing for influencer gallery
+export const dynamic = "force-dynamic";
+
+// GET /api/gallery â€” public product listing for influencer gallery
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const page = Math.max(1, Number(searchParams.get("page") || 1));

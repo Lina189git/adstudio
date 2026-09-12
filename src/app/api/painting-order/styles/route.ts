@@ -1,9 +1,11 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import {
   PAINTING_STYLE_OPTIONS,
   type PaintingStyleOption,
 } from "@/lib/paintingOrder";
 import {
+
+export const dynamic = "force-dynamic";
   fetchPaintingServiceHealth,
   getPaintingServiceUrl,
   getPaintingStylesTimeoutMs,

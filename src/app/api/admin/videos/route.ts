@@ -1,7 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { VideoStatus } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { requireAdminApiSession, unauthorizedAdminResponse } from "@/lib/admin";
+
+export const dynamic = "force-dynamic";
 
 // GET /api/admin/videos
 export async function GET(request: NextRequest) {

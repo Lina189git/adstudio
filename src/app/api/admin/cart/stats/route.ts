@@ -1,6 +1,8 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireAdminApiSession, unauthorizedAdminResponse } from "@/lib/admin";
+
+export const dynamic = "force-dynamic";
 
 // GET /api/admin/cart/stats
 export async function GET() {

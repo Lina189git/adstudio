@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireAdminApiSession, unauthorizedAdminResponse } from "@/lib/admin";
+
+export const dynamic = "force-dynamic";
 
 // GET /api/admin/tasks/[id]
 export async function GET(
@@ -24,7 +26,7 @@ export async function GET(
   return NextResponse.json(task);
 }
 
-// PUT /api/admin/tasks/[id] — update readme, requirements, deadline, status, sample shipping
+// PUT /api/admin/tasks/[id] â€” update readme, requirements, deadline, status, sample shipping
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }

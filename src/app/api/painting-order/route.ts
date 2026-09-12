@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import {
   sendCommissionAdminEmail,
   sendCommissionConfirmationEmail,
@@ -7,6 +7,8 @@ import {
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 const REQUIRED = [
   "customerName",
@@ -19,7 +21,7 @@ const REQUIRED = [
 ];
 
 function formatCurrencyRange(base: number) {
-  return `$${Math.round(base)} – $${Math.round(base * 1.35)}`;
+  return `$${Math.round(base)} â€“ $${Math.round(base * 1.35)}`;
 }
 
 function estimateBasePrice(p: Record<string, string>) {
@@ -37,10 +39,10 @@ function estimateBasePrice(p: Record<string, string>) {
 function estimateTimeline(p: Record<string, string>) {
   if (p.paintingType === "event") return "Depends on event date and setup requirements";
   const map: Record<string, string> = {
-    small: "7 – 10 business days",  medium: "10 – 14 business days",
-    large: "14 – 21 business days", mural:  "21 – 30 business days",
+    small: "7 â€“ 10 business days",  medium: "10 â€“ 14 business days",
+    large: "14 â€“ 21 business days", mural:  "21 â€“ 30 business days",
   };
-  return map[p.size] ?? "10 – 18 business days";
+  return map[p.size] ?? "10 â€“ 18 business days";
 }
 
 export async function POST(request: NextRequest) {

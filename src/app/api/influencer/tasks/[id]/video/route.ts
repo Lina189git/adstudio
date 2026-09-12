@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireInfluencerApiSession, unauthorizedInfluencerResponse } from "@/lib/influencer";
 
-// POST /api/influencer/tasks/[id]/video — submit a video for a task
+export const dynamic = "force-dynamic";
+
+// POST /api/influencer/tasks/[id]/video â€” submit a video for a task
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }

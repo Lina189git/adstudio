@@ -1,9 +1,11 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { toFile } from "openai";
+
+export const dynamic = "force-dynamic";
 
 const OPENAI_MODEL = "gpt-image-1";
 
@@ -16,16 +18,16 @@ Create painterly depth through layered color washes rather than hard edges.
 Give the canvas the texture of thick impasto oil paint with clearly visible, expressive brushwork.
 The result should look like a gallery-quality museum painting.`,
 
-  cezanne: `Convert this photograph into a Post-Impressionist oil painting masterfully inspired by Paul Cézanne.
+  cezanne: `Convert this photograph into a Post-Impressionist oil painting masterfully inspired by Paul CÃ©zanne.
 Use structured, deliberate brushstrokes that build three-dimensional form through modulated color planes.
 Apply an earthy palette of warm ochres, muted greens, dusty oranges, and terracotta reds.
 Emphasize the geometric underlying architecture of the scene through repeated, overlapping paint marks.
-Include subtle distortions of perspective and the composed, analytical character of Cézanne's studio style.
+Include subtle distortions of perspective and the composed, analytical character of CÃ©zanne's studio style.
 The surface should have rich, tactile oil paint texture with visible directionality.`,
 
   vangogh: `Reimagine this photograph as a dramatic Expressionist oil painting in the unmistakable style of Vincent van Gogh.
 Use bold, swirling, energetic brushstrokes that convey intense movement, emotion, and inner life.
-Apply saturated, heightened colors — deep prussian blues, cadmium yellows, viridian greens, and burnt siennas.
+Apply saturated, heightened colors â€” deep prussian blues, cadmium yellows, viridian greens, and burnt siennas.
 Outline forms with dark, emphatic contour strokes in the manner of cloisonnism.
 Create a dynamic, turbulent surface with thick impasto paint and clearly directional, rhythmic strokes.
 The final result must feel emotionally charged, vivid, and unmistakably hand-painted.`,

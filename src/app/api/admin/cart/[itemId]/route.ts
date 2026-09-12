@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireAdminApiSession, unauthorizedAdminResponse } from "@/lib/admin";
 
-// DELETE /api/admin/cart/:itemId — admin removes a single cart item
+export const dynamic = "force-dynamic";
+
+// DELETE /api/admin/cart/:itemId â€” admin removes a single cart item
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: { itemId: string } }

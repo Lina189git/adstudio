@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import {
+
+export const dynamic = "force-dynamic";
   requireAdminApiSession,
   unauthorizedAdminResponse,
 } from "@/lib/admin";
@@ -9,7 +11,7 @@ cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
-  timeout: 60_000, // 60 s — prevents premature 499s on slow connections
+  timeout: 60_000, // 60 s â€” prevents premature 499s on slow connections
 });
 
 function sanitizePublicId(name: string) {
@@ -19,7 +21,7 @@ function sanitizePublicId(name: string) {
     .slice(0, 60);
 }
 
-/** Upload a buffer to Cloudinary using a base64 data URI (single HTTP request — no stream). */
+/** Upload a buffer to Cloudinary using a base64 data URI (single HTTP request â€” no stream). */
 async function uploadToCloudinary(
   buffer: Buffer,
   mimeType: string,
@@ -35,7 +37,7 @@ async function uploadToCloudinary(
   });
 }
 
-/** Retry helper — up to `attempts` tries with exponential back-off. */
+/** Retry helper â€” up to `attempts` tries with exponential back-off. */
 async function withRetry<T>(
   fn: () => Promise<T>,
   attempts = 3,
@@ -113,7 +115,7 @@ export async function POST(request: NextRequest) {
     const result = await withRetry(
       () => uploadToCloudinary(buffer, file.type, fileName),
       3,   // up to 3 attempts
-      800  // 800 ms → 1 600 ms between retries
+      800  // 800 ms â†’ 1 600 ms between retries
     );
 
     return NextResponse.json({

@@ -1,7 +1,9 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-// GET /api/frames — public list of active frames for the studio UI
+export const dynamic = "force-dynamic";
+
+// GET /api/frames â€” public list of active frames for the studio UI
 export async function GET() {
   try {
     const frames = await prisma.frame.findMany({

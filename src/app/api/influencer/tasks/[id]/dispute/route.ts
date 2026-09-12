@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireInfluencerApiSession, unauthorizedInfluencerResponse } from "@/lib/influencer";
+
+export const dynamic = "force-dynamic";
 
 // POST /api/influencer/tasks/[id]/dispute
 // Influencer flags a commission payment for review (dispute / refund request)

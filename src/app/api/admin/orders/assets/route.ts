@@ -1,10 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import {
   requireAdminApiSession,
   unauthorizedAdminResponse,
 } from "@/lib/admin";
 import { isAllowedRemoteImageUrl } from "@/lib/safeImage";
+
+export const dynamic = "force-dynamic";
 
 function getFileExtension(contentType: string | null, fallbackUrl: string) {
   if (contentType?.includes("png")) return "png";

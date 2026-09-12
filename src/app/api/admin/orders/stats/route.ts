@@ -5,6 +5,8 @@ import {
   unauthorizedAdminResponse,
 } from "@/lib/admin";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const session = await requireAdminApiSession();

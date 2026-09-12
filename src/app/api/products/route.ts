@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 // GET /api/products - List products for frontend
 export async function GET(request: NextRequest) {

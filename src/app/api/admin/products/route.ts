@@ -1,10 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import {
   requireAdminApiSession,
   unauthorizedAdminResponse,
 } from "@/lib/admin";
 import { normalizeAdminProductVariants } from "@/lib/adminProductVariants";
+
+export const dynamic = "force-dynamic";
 
 // GET /api/admin/products - List all products
 export async function GET(request: NextRequest) {

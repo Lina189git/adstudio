@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { requireAdminApiSession, unauthorizedAdminResponse } from "@/lib/admin";
 import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 // PUT /api/admin/ad-payments/[id]
 // body: { action: "approve" | "pay" | "refund" | "update_amount", paymentRef?, amountCents? }
