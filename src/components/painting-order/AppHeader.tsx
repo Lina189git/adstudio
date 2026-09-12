@@ -4,18 +4,32 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, TrendingUp } from "lucide-react";
+import { useSession } from "next-auth/react";
 import UserMenu from "@/components/UserMenu";
 
-const NAV_ITEMS = [
-  { href: "/gallery",               label: "Browse products" },
-  { href: "/influencer/dashboard",  label: "My dashboard"   },
-  { href: "/influencer/tasks",      label: "My tasks"       },
-  { href: "/influencer/profile",    label: "Profile"        },
-];
+const NAV_BY_ROLE: Record<string, { href: string; label: string }[]> = {
+  ADMIN: [
+    { href: "/admin",    label: "Admin" },
+    { href: "/gallery",  label: "Products" },
+  ],
+  INFLUENCER: [
+    { href: "/gallery",               label: "Products"    },
+    { href: "/influencer/dashboard",  label: "My dashboard" },
+    { href: "/influencer/tasks",      label: "My tasks"    },
+    { href: "/influencer/profile",    label: "Profile"     },
+  ],
+  USER: [
+    { href: "/gallery", label: "Products" },
+    { href: "/orders",  label: "My orders" },
+  ],
+};
 
 export default function AppHeader() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session } = useSession();
+  const role = (session?.user as { role?: string })?.role ?? "USER";
+  const navItems = NAV_BY_ROLE[role] ?? NAV_BY_ROLE.USER;
 
   return (
     <header className="sticky top-0 z-30 border-b border-[#eadfcb] bg-[#fffaf2]/95 backdrop-blur-md">
@@ -37,7 +51,7 @@ export default function AppHeader() {
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-1 md:flex">
-          {NAV_ITEMS.map(({ href, label }) => {
+          {navItems.map(({ href, label }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
             return (
               <Link
@@ -75,7 +89,7 @@ export default function AppHeader() {
       {mobileOpen && (
         <div className="border-t border-[#eadfcb] bg-[#fffaf2] px-6 pb-5 pt-3 md:hidden">
           <nav className="flex flex-col gap-1">
-            {NAV_ITEMS.map(({ href, label }) => {
+            {navItems.map(({ href, label }) => {
               const active = pathname === href || pathname.startsWith(href + "/");
               return (
                 <Link

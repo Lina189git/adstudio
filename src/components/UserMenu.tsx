@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { LayoutDashboard, LogOut, Settings, Shield, TrendingUp, User, Video, ChevronDown } from "lucide-react";
@@ -51,19 +51,25 @@ export default function UserMenu() {
   const role = (session.user as { role?: string }).role || "USER";
   const cfg = ROLE_CONFIG[role] ?? ROLE_CONFIG.USER;
 
-  const menuItems = [
-    ...(role === "ADMIN"
-      ? [{ href: "/admin",               label: "Admin dashboard",  icon: Shield         }]
-      : []),
-    ...(role === "INFLUENCER" || role === "ADMIN"
+  const menuItems: { href: string; label: string; icon: React.ElementType }[] =
+    role === "ADMIN"
+      ? [
+          { href: "/admin",    label: "Admin dashboard",  icon: Shield     },
+          { href: "/gallery",  label: "Browse products",  icon: TrendingUp },
+          { href: "/account",  label: "My account",       icon: User       },
+        ]
+      : role === "INFLUENCER"
       ? [
           { href: "/influencer/dashboard", label: "My dashboard",    icon: LayoutDashboard },
-          { href: "/influencer/tasks",     label: "My tasks",         icon: Video           },
+          { href: "/influencer/tasks",     label: "My tasks",        icon: Video           },
           { href: "/gallery",              label: "Browse products",  icon: TrendingUp      },
+          { href: "/influencer/profile",   label: "Profile settings", icon: Settings        },
         ]
-      : [{ href: "/gallery",              label: "Browse products",  icon: TrendingUp      }]),
-    { href: "/influencer/profile",       label: "Profile settings", icon: Settings        },
-  ];
+      : [
+          { href: "/gallery",  label: "Browse products",  icon: TrendingUp },
+          { href: "/orders",   label: "My orders",        icon: Video      },
+          { href: "/account",  label: "My account",       icon: User       },
+        ];
 
   const initials = session.user?.name
     ?.split(" ")
