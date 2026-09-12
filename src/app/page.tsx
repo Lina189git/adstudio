@@ -9,24 +9,28 @@ import UserMenu from "@/components/UserMenu";
 export const dynamic = "force-dynamic";
 
 async function getFeaturedProducts() {
-  return prisma.product.findMany({
-    where: { isActive: true, isFeatured: true },
-    take: 4,
-    orderBy: { createdAt: "desc" },
-    include: { category: { select: { name: true } } },
-  });
+  try {
+    return await prisma.product.findMany({
+      where: { isActive: true, isFeatured: true },
+      take: 4,
+      orderBy: { createdAt: "desc" },
+      include: { category: { select: { name: true } } },
+    });
+  } catch { return []; }
 }
 
 async function getPublicVideos() {
-  return prisma.videoSubmission.findMany({
-    where: { isPublic: true, status: "PUBLISHED" },
-    take: 6,
-    orderBy: { approvedAt: "desc" },
-    include: {
-      influencer: { select: { name: true, image: true } },
-      task: { include: { application: { include: { product: { select: { name: true, imageUrl: true } } } } } },
-    },
-  });
+  try {
+    return await prisma.videoSubmission.findMany({
+      where: { isPublic: true, status: "PUBLISHED" },
+      take: 6,
+      orderBy: { approvedAt: "desc" },
+      include: {
+        influencer: { select: { name: true, image: true } },
+        task: { include: { application: { include: { product: { select: { name: true, imageUrl: true } } } } } },
+      },
+    });
+  } catch { return []; }
 }
 
 const money = (cents: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
