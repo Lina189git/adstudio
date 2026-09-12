@@ -129,8 +129,20 @@ export default function AdminProductsManager() {
     }
   };
 
-  const loadCategories = async () => setCategories(await (await fetch("/api/admin/categories")).json());
-  const loadStats = async () => setStats(await (await fetch("/api/admin/products/stats")).json());
+  const loadCategories = async () => {
+    try {
+      const res = await fetch("/api/admin/categories");
+      const data = await res.json();
+      setCategories(Array.isArray(data) ? data : data.categories || []);
+    } catch { /* non-critical — products still load */ }
+  };
+  const loadStats = async () => {
+    try {
+      const res = await fetch("/api/admin/products/stats");
+      const data = await res.json();
+      setStats({ total: data.total || 0, featured: data.featured || 0, inactive: data.inactive || 0 });
+    } catch { /* non-critical — stats default to 0 */ }
+  };
   const loadProducts = useCallback(async (page = 1) => {
     setLoading(true);
     try {

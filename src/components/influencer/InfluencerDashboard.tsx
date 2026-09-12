@@ -133,6 +133,8 @@ export default function InfluencerDashboard() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState("");
+
   useEffect(() => {
     Promise.all([
       fetch("/api/influencer/applications").then((r) => r.json()),
@@ -140,6 +142,8 @@ export default function InfluencerDashboard() {
     ]).then(([appData, taskData]) => {
       setApplications(appData.applications || []);
       setTasks(taskData.tasks || []);
+    }).catch(() => {
+      setError("Failed to load dashboard. Please refresh the page.");
     }).finally(() => setLoading(false));
   }, []);
 
@@ -148,6 +152,12 @@ export default function InfluencerDashboard() {
       <div className="flex items-center justify-center py-20 text-sm text-[#6b5d54]">
         <Loader2 className="mr-2 h-5 w-5 animate-spin" />Loading your dashboard...
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">{error}</div>
     );
   }
 

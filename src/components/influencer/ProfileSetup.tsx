@@ -44,6 +44,7 @@ export default function ProfileSetup() {
           });
         }
       })
+      .catch(() => setError("Failed to load profile. Please refresh."))
       .finally(() => setLoading(false));
   }, []);
 
