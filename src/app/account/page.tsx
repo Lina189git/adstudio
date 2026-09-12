@@ -1,10 +1,9 @@
-import { getServerSession } from "next-auth/next";
+﻿import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
 import AppHeader from "@/components/painting-order/AppHeader";
 import {
   ArrowLeft,
@@ -17,6 +16,8 @@ import {
   Package,
   Shield,
 } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 async function getAccountSummary(userId: string) {
   const [account, paidSummary] = await Promise.all([

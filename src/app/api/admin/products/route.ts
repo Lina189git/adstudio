@@ -4,6 +4,8 @@ import {
   requireAdminApiSession,
   unauthorizedAdminResponse,
 } from "@/lib/admin";
+
+
 import { normalizeAdminProductVariants } from "@/lib/adminProductVariants";
 
 export const dynamic = "force-dynamic";
@@ -12,32 +14,25 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     const session = await requireAdminApiSession();
-
     if (!session) {
       return unauthorizedAdminResponse();
     }
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
     const category = searchParams.get('category');
     const search = searchParams.get('search');
-
     const skip = (page - 1) * limit;
-
     const where: any = {};
-
     if (category) {
       where.categoryId = category;
     }
-
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
       ];
     }
-
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where,
@@ -56,7 +51,6 @@ export async function GET(request: NextRequest) {
       }),
       prisma.product.count({ where }),
     ]);
-
     return NextResponse.json({
       products,
       pagination: {
@@ -74,16 +68,13 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
 // POST /api/admin/products - Create new product
 export async function POST(request: NextRequest) {
   try {
     const session = await requireAdminApiSession();
-
     if (!session) {
       return unauthorizedAdminResponse();
     }
-
     const body = await request.json();
     const {
       name,
@@ -104,7 +95,6 @@ export async function POST(request: NextRequest) {
       sampleStock,
       taskRequirements,
     } = body;
-
     // Validate required fields
     if (!name || !slug || !categoryId || basePriceCents === undefined) {
       return NextResponse.json(
@@ -112,33 +102,27 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
     // Check if category exists
     const category = await prisma.category.findUnique({
       where: { id: categoryId },
     });
-
     if (!category) {
       return NextResponse.json(
         { error: 'Category not found' },
         { status: 400 }
       );
     }
-
     // Check if slug is unique
     const existingProduct = await prisma.product.findUnique({
       where: { slug },
     });
-
     if (existingProduct) {
       return NextResponse.json(
         { error: 'Product slug already exists' },
         { status: 400 }
       );
     }
-
     const normalizedVariants = normalizeAdminProductVariants(variants, slug);
-
     const product = await prisma.product.create({
       data: {
         name,
@@ -178,7 +162,6 @@ export async function POST(request: NextRequest) {
         },
       },
     });
-
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     console.error('Error creating product:', error);

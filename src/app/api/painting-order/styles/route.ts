@@ -4,13 +4,13 @@ import {
   type PaintingStyleOption,
 } from "@/lib/paintingOrder";
 import {
-
-export const dynamic = "force-dynamic";
   fetchPaintingServiceHealth,
   getPaintingServiceUrl,
   getPaintingStylesTimeoutMs,
   isAbortError,
 } from "@/lib/paintingOrderBackend";
+
+export const dynamic = "force-dynamic";
 
 function getStylesFallbackResponse(notice?: string) {
   return {

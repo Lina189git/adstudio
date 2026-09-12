@@ -6,8 +6,6 @@ import {
   normalizePaintingStylePreset,
 } from "@/lib/paintingOrder";
 import {
-
-export const dynamic = "force-dynamic";
   describePaintingServiceFailure,
   getPaintingServiceUrl,
   getPaintingSourceFetchTimeoutMs,
@@ -15,6 +13,8 @@ export const dynamic = "force-dynamic";
   isAbortError,
   warmPaintingService,
 } from "@/lib/paintingOrderBackend";
+
+export const dynamic = "force-dynamic";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,

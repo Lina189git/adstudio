@@ -4,6 +4,8 @@ import {
   requireAdminApiSession,
   unauthorizedAdminResponse,
 } from "@/lib/admin";
+
+
 import { normalizeAdminProductVariants } from "@/lib/adminProductVariants";
 
 export const dynamic = "force-dynamic";
@@ -13,16 +15,13 @@ interface RouteParams {
     id: string;
   };
 }
-
 // GET /api/admin/products/[id] - Get single product
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const session = await requireAdminApiSession();
-
     if (!session) {
       return unauthorizedAdminResponse();
     }
-
     const product = await prisma.product.findUnique({
       where: { id: params.id },
       include: {
@@ -35,14 +34,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         },
       },
     });
-
     if (!product) {
       return NextResponse.json(
         { error: 'Product not found' },
         { status: 404 }
       );
     }
-
     return NextResponse.json(product);
   } catch (error) {
     console.error('Error fetching product:', error);
@@ -52,16 +49,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
-
 // PUT /api/admin/products/[id] - Update product
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const session = await requireAdminApiSession();
-
     if (!session) {
       return unauthorizedAdminResponse();
     }
-
     const body = await request.json();
     const {
       name,
@@ -82,7 +76,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       sampleStock,
       taskRequirements,
     } = body;
-
     // Check if product exists
     const existingProduct = await prisma.product.findUnique({
       where: { id: params.id },
@@ -90,20 +83,17 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         variants: true,
       },
     });
-
     if (!existingProduct) {
       return NextResponse.json(
         { error: 'Product not found' },
         { status: 404 }
       );
     }
-
     // Check if category exists (if provided)
     if (categoryId) {
       const category = await prisma.category.findUnique({
         where: { id: categoryId },
       });
-
       if (!category) {
         return NextResponse.json(
           { error: 'Category not found' },
@@ -111,13 +101,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         );
       }
     }
-
     // Check slug uniqueness (if changed)
     if (slug && slug !== existingProduct.slug) {
       const slugExists = await prisma.product.findUnique({
         where: { slug },
       });
-
       if (slugExists) {
         return NextResponse.json(
           { error: 'Product slug already exists' },
@@ -125,12 +113,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         );
       }
     }
-
     const nextSlug = slug || existingProduct.slug;
     const normalizedVariants = Array.isArray(variants)
       ? normalizeAdminProductVariants(variants, nextSlug)
       : null;
-
     const product = await prisma.$transaction(async (tx) => {
       await tx.product.update({
         where: { id: params.id },
@@ -155,7 +141,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           ...(taskRequirements !== undefined && { taskRequirements }),
         },
       });
-
       if (normalizedVariants) {
         const existingVariantIds = new Set(existingProduct.variants.map((variant) => variant.id));
         const incomingVariantIds = new Set(
@@ -163,7 +148,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
             .map((variant) => variant.id)
             .filter((value): value is string => Boolean(value))
         );
-
         for (const variant of normalizedVariants) {
           if (variant.id && existingVariantIds.has(variant.id)) {
             await tx.productVariant.update({
@@ -197,11 +181,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
             });
           }
         }
-
         const missingVariantIds = existingProduct.variants
           .filter((variant) => !incomingVariantIds.has(variant.id))
           .map((variant) => variant.id);
-
         if (missingVariantIds.length > 0) {
           await tx.productVariant.updateMany({
             where: { id: { in: missingVariantIds } },
@@ -209,7 +191,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           });
         }
       }
-
       return tx.product.findUnique({
         where: { id: params.id },
         include: {
@@ -220,7 +201,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         },
       });
     });
-
     return NextResponse.json(product);
   } catch (error) {
     console.error('Error updating product:', error);
@@ -233,16 +213,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
-
 // DELETE /api/admin/products/[id] - Delete product
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const session = await requireAdminApiSession();
-
     if (!session) {
       return unauthorizedAdminResponse();
     }
-
     // Check if product exists
     const product = await prisma.product.findUnique({
       where: { id: params.id },
@@ -252,14 +229,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         },
       },
     });
-
     if (!product) {
       return NextResponse.json(
         { error: 'Product not found' },
         { status: 404 }
       );
     }
-
     // Check if product has been ordered
     if (product._count.orderItems > 0) {
       // Soft delete - mark as inactive instead of hard delete
@@ -267,17 +242,14 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         where: { id: params.id },
         data: { isActive: false },
       });
-
       return NextResponse.json({
         message: 'Product deactivated (has existing orders)',
       });
     }
-
     // Hard delete if no orders
     await prisma.product.delete({
       where: { id: params.id },
     });
-
     return NextResponse.json({
       message: 'Product deleted successfully',
     });

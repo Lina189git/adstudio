@@ -4,8 +4,6 @@ import { getServerSession } from "next-auth/next";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import {
-
-export const dynamic = "force-dynamic";
   CANVAS_SIZE_OPTIONS,
   CanvasSize,
   FRAME_STYLE_OPTIONS,
@@ -14,6 +12,8 @@ export const dynamic = "force-dynamic";
   PaintingProductMode,
   estimatePaintingPrice,
 } from "@/lib/paintingOrder";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {

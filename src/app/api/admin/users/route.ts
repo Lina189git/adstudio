@@ -2,11 +2,11 @@
 import { Prisma, UserRole } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import {
-
-export const dynamic = "force-dynamic";
   requireAdminApiSession,
   unauthorizedAdminResponse,
 } from "@/lib/admin";
+
+export const dynamic = "force-dynamic";
 
 const ALLOWED_ROLES = new Set<UserRole>(["USER", "ADMIN", "ARTIST", "VISITOR"]);
 

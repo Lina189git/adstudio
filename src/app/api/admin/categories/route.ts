@@ -1,11 +1,11 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import {
-
-export const dynamic = "force-dynamic";
   requireAdminApiSession,
   unauthorizedAdminResponse,
 } from "@/lib/admin";
+
+export const dynamic = "force-dynamic";
 
 // GET /api/admin/categories - List all categories
 export async function GET() {

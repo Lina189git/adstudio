@@ -2,11 +2,11 @@
 import { UserRole } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import {
-
-export const dynamic = "force-dynamic";
   requireAdminApiSession,
   unauthorizedAdminResponse,
 } from "@/lib/admin";
+
+export const dynamic = "force-dynamic";
 
 interface RouteParams {
   params: {

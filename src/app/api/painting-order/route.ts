@@ -4,6 +4,8 @@ import {
   sendCommissionConfirmationEmail,
   type CommissionPayload,
 } from "@/lib/email";
+
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
@@ -19,11 +21,9 @@ const REQUIRED = [
   "style",
   "quantity",
 ];
-
 function formatCurrencyRange(base: number) {
   return `$${Math.round(base)} â€“ $${Math.round(base * 1.35)}`;
 }
-
 function estimateBasePrice(p: Record<string, string>) {
   const baseByType: Record<string, number> = {
     portrait: 180, landscape: 220, interior: 300,
@@ -35,7 +35,6 @@ function estimateBasePrice(p: Record<string, string>) {
   const qty = Math.max(Number(p.quantity) || 1, 1);
   return (baseByType[p.paintingType] || 200) * (sizeFactor[p.size] || 1.2) * qty;
 }
-
 function estimateTimeline(p: Record<string, string>) {
   if (p.paintingType === "event") return "Depends on event date and setup requirements";
   const map: Record<string, string> = {
@@ -44,11 +43,9 @@ function estimateTimeline(p: Record<string, string>) {
   };
   return map[p.size] ?? "10 â€“ 18 business days";
 }
-
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();
-
     for (const field of REQUIRED) {
       if (!String(payload?.[field] ?? "").trim()) {
         return NextResponse.json(
@@ -57,7 +54,6 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-
     const email = String(payload.email ?? "").trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json(
@@ -65,19 +61,15 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
     const base           = estimateBasePrice(payload);
     const estimatedRange = formatCurrencyRange(base);
     const timeline       = estimateTimeline(payload);
     const reference      = `ART-${Date.now().toString().slice(-8)}`;
-
     const session = await getServerSession(authOptions);
     const userId = (session?.user as { id?: string })?.id ?? null;
-
     const referenceImageUrls: string[] = Array.isArray(payload.referenceImageUrls)
       ? payload.referenceImageUrls.filter(Boolean)
       : [];
-
     // Persist to DB so admin can view and assign to artists
     await prisma.commissionRequest.create({
       data: {
@@ -100,7 +92,6 @@ export async function POST(request: NextRequest) {
         userId,
       },
     });
-
     const emailPayload: CommissionPayload = {
       customerName:       String(payload.customerName ?? "").trim(),
       email,
@@ -119,12 +110,10 @@ export async function POST(request: NextRequest) {
       timeline,
       reference,
     };
-
     await Promise.allSettled([
       sendCommissionAdminEmail(emailPayload),
       sendCommissionConfirmationEmail(emailPayload),
     ]);
-
     return NextResponse.json(
       { ok: true, reference, estimatedRange, timeline },
       { status: 201 }
