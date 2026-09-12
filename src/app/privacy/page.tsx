@@ -4,12 +4,13 @@ import AppHeader from "@/components/painting-order/AppHeader";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Learn how Oil Painting AI Studio collects, uses, and protects your personal information.",
+  description: "Learn how Goosego collects, uses, and protects your personal information when you use our influencer advertising platform.",
 };
 
-const LAST_UPDATED = "1 June 2025";
-const COMPANY = "Oil Painting AI Studio";
-const EMAIL = "privacy@oilpaintingstudio.com";
+const LAST_UPDATED = "12 September 2026";
+const COMPANY = "Goosego";
+const SITE = "adstudio.onrender.com";
+const EMAIL = "privacy@goosego.com";
 
 export default function PrivacyPage() {
   return (
@@ -28,9 +29,13 @@ export default function PrivacyPage() {
           <section>
             <h2>1. Who We Are</h2>
             <p>
-              {COMPANY} (&ldquo;we&rdquo;, &ldquo;our&rdquo;, &ldquo;us&rdquo;) operates the website
-              at oilpaintingstudio.com. This Privacy Policy explains how we collect, use, and protect
-              your personal information when you use our Service.
+              {COMPANY} (&ldquo;we&rdquo;, &ldquo;our&rdquo;, &ldquo;us&rdquo;) operates the platform
+              at {SITE}. Goosego is an ecommerce advertising company that connects brands with
+              influencer creators. Brands list products, influencers apply to receive free samples,
+              create authentic video advertisements, and we broadcast those ads across TikTok,
+              Instagram Reels, YouTube Shorts, Facebook, and other digital channels. This Privacy
+              Policy explains how we collect, use, and protect your personal information when you use
+              our Service.
             </p>
           </section>
 
@@ -43,18 +48,28 @@ export default function PrivacyPage() {
                 email via Google.
               </li>
               <li>
-                <strong className="text-[#1a1614]">Order information:</strong> Shipping address,
-                phone number, and payment details (processed and stored securely by Stripe — we never
-                store card numbers).
+                <strong className="text-[#1a1614]">Influencer profile data:</strong> Social media
+                handles, follower counts, content niche, and shipping address provided when setting up
+                a creator profile.
               </li>
               <li>
-                <strong className="text-[#1a1614]">Uploaded images:</strong> Photos you upload for
-                AI style transfer or custom commissions are stored in Cloudinary and used solely to
-                fulfil your order.
+                <strong className="text-[#1a1614]">Application and task data:</strong> Product
+                applications, task briefs, video submissions, and communication between brands and
+                creators.
+              </li>
+              <li>
+                <strong className="text-[#1a1614]">Uploaded content:</strong> Video advertisements
+                and supporting assets submitted by influencers are stored and may be distributed
+                across advertising platforms on behalf of brands.
+              </li>
+              <li>
+                <strong className="text-[#1a1614]">Payment information:</strong> Commission payment
+                details for influencers and billing information for brands, processed securely by our
+                payment provider — we do not store card numbers.
               </li>
               <li>
                 <strong className="text-[#1a1614]">Usage data:</strong> Pages visited, session
-                duration, and device type, collected anonymously for site improvement.
+                duration, and device type, collected anonymously for platform improvement.
               </li>
             </ul>
           </section>
@@ -62,11 +77,13 @@ export default function PrivacyPage() {
           <section>
             <h2>3. How We Use Your Information</h2>
             <ul className="list-disc pl-5">
-              <li>Processing and fulfilling your orders and commission requests.</li>
-              <li>Sending order confirmation, shipping, and status update emails.</li>
-              <li>Generating AI artwork previews using your uploaded images via OpenAI.</li>
-              <li>Responding to customer support enquiries.</li>
-              <li>Improving the Service and detecting fraud.</li>
+              <li>Matching brands with suitable influencer creators and managing the application process.</li>
+              <li>Shipping product samples to approved influencers.</li>
+              <li>Collecting, reviewing, and broadcasting influencer-created video ads on TikTok, Instagram, YouTube, Facebook, and other digital platforms.</li>
+              <li>Processing and distributing commission payments to influencers.</li>
+              <li>Sending task briefs, status updates, and payment confirmation emails.</li>
+              <li>Responding to support enquiries from brands and influencers.</li>
+              <li>Improving the platform and detecting fraud.</li>
               <li>Sending occasional marketing emails — you may unsubscribe at any time.</li>
             </ul>
           </section>
@@ -75,34 +92,45 @@ export default function PrivacyPage() {
             <h2>4. How We Share Your Information</h2>
             <p>We do not sell your personal data. We share data only with:</p>
             <ul className="list-disc pl-5">
-              <li><strong className="text-[#1a1614]">Stripe</strong> — for secure payment processing.</li>
-              <li><strong className="text-[#1a1614]">Cloudinary</strong> — for image hosting and delivery.</li>
-              <li><strong className="text-[#1a1614]">OpenAI</strong> — to generate AI painting previews from your uploaded photos.</li>
-              <li><strong className="text-[#1a1614]">Shipping carriers</strong> — to deliver your physical orders.</li>
+              <li><strong className="text-[#1a1614]">Advertising platforms</strong> — TikTok, Instagram, YouTube, Facebook, and similar channels where influencer video ads are broadcast on behalf of brands.</li>
+              <li><strong className="text-[#1a1614]">Payment processors</strong> — for secure commission and billing processing.</li>
+              <li><strong className="text-[#1a1614]">Cloud storage providers</strong> — for hosting and delivering video content and product images.</li>
+              <li><strong className="text-[#1a1614]">Shipping carriers</strong> — to deliver product samples to influencers.</li>
               <li>Law enforcement or regulators where required by law.</li>
             </ul>
           </section>
 
           <section>
-            <h2>5. Cookies</h2>
+            <h2>5. Influencer Content and Licensing</h2>
             <p>
-              We use essential cookies to maintain your session and remember cart contents.
+              By submitting a video advertisement through the platform, influencers grant {COMPANY}
+              and the relevant brand a non-exclusive, royalty-free licence to use, broadcast,
+              republish, and promote the submitted content across agreed digital advertising channels
+              for the duration specified in the Creator Partnership Agreement. The scope of permitted
+              platforms and usage is detailed in each individual task brief.
+            </p>
+          </section>
+
+          <section>
+            <h2>6. Cookies</h2>
+            <p>
+              We use essential cookies to maintain your session and remember preferences.
               We do not use third-party advertising cookies. You can disable cookies in your
-              browser settings, though some site features may not function correctly.
+              browser settings, though some platform features may not function correctly.
             </p>
           </section>
 
           <section>
-            <h2>6. Data Retention</h2>
+            <h2>7. Data Retention</h2>
             <p>
-              We retain your account and order data for as long as your account is active or as
-              needed to fulfil legal obligations. Uploaded images used solely for AI preview
-              generation that are not part of a paid order are deleted within 30 days.
+              We retain your account and activity data for as long as your account is active or as
+              needed to fulfil legal obligations. Uploaded video content that is not part of an
+              active campaign may be deleted 90 days after campaign completion upon request.
             </p>
           </section>
 
           <section>
-            <h2>7. Your Rights</h2>
+            <h2>8. Your Rights</h2>
             <p>Depending on your location, you may have the right to:</p>
             <ul className="list-disc pl-5">
               <li>Access the personal data we hold about you.</li>
@@ -118,7 +146,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2>8. Security</h2>
+            <h2>9. Security</h2>
             <p>
               We implement industry-standard security measures including HTTPS encryption,
               hashed passwords, and access controls. No transmission over the internet is
@@ -127,7 +155,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2>9. Children&rsquo;s Privacy</h2>
+            <h2>10. Children&rsquo;s Privacy</h2>
             <p>
               Our Service is not directed at children under 13. We do not knowingly collect
               personal data from children. If you believe a child has provided us with data,
@@ -136,7 +164,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2>10. Changes to This Policy</h2>
+            <h2>11. Changes to This Policy</h2>
             <p>
               We may update this Privacy Policy periodically. We will notify registered users
               by email of material changes. The date at the top reflects the most recent update.
@@ -144,7 +172,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2>11. Contact Us</h2>
+            <h2>12. Contact Us</h2>
             <p>
               For privacy-related questions or data requests, contact us at{" "}
               <a href={`mailto:${EMAIL}`} className="text-[#d4a574] hover:underline">{EMAIL}</a>.
