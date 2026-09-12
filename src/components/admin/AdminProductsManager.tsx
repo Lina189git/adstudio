@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ImagePlus, Loader2, Pencil, Plus, RefreshCw, Trash2, UploadCloud } from "lucide-react";
-import { CANVAS_SIZE_OPTIONS, FRAME_STYLE_OPTIONS, getCanvasSizeLabel, getFrameStyleLabel } from "@/lib/paintingOrder";
+import { CANVAS_SIZE_OPTIONS, getCanvasSizeLabel, getFrameStyleLabel } from "@/lib/paintingOrder";
 
 type Category = { id: string; name: string; slug: string };
 type Variant = { id?: string; name: string; canvasSize: string; frameStyle: string; previewImageUrl: string; details: string; priceCents: string; stockQuantity: string; isActive: boolean };
@@ -39,7 +39,7 @@ type Pagination = { page: number; pages: number; total: number };
 const newVariant = (): Variant => ({
   name: "",
   canvasSize: CANVAS_SIZE_OPTIONS[1]?.value || CANVAS_SIZE_OPTIONS[0].value,
-  frameStyle: FRAME_STYLE_OPTIONS[0].value,
+  frameStyle: "none",
   previewImageUrl: "",
   details: "",
   priceCents: "0",
@@ -425,8 +425,8 @@ export default function AdminProductsManager() {
                             <select value={variant.canvasSize} onChange={(event) => patchVariant(index, "canvasSize", event.target.value)} className="w-full rounded-xl border border-[#eadfcb] bg-[#faf6ef] px-4 py-2.5 text-sm outline-none transition focus:border-[#d4a574]">{CANVAS_SIZE_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
                           </div>
                           {(() => {
-                            const knownFrameValues = new Set([...FRAME_STYLE_OPTIONS.map((o) => o.value), ...frames.map((f) => f.slug)]);
-                            const isCustomFrame = !knownFrameValues.has(variant.frameStyle);
+                            const knownFrameValues = new Set(["none", ...frames.map((f) => f.slug)]);
+                            const isCustomFrame = variant.frameStyle !== "" && !knownFrameValues.has(variant.frameStyle);
                             return (
                               <div>
                                 <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#8c7764]">Frame style</p>
@@ -439,14 +439,10 @@ export default function AdminProductsManager() {
                                     }}
                                     className="w-full rounded-xl border border-[#eadfcb] bg-[#faf6ef] px-4 py-2.5 text-sm outline-none transition focus:border-[#d4a574]"
                                   >
-                                    <optgroup label="Standard">
-                                      {FRAME_STYLE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                                    </optgroup>
-                                    {frames.length > 0 && (
-                                      <optgroup label="Custom frames">
-                                        {frames.map((f) => <option key={f.id} value={f.slug}>{f.name}</option>)}
-                                      </optgroup>
-                                    )}
+                                    <option value="none">No frame</option>
+                                    {frames.map((f) => (
+                                      <option key={f.id} value={f.slug}>{f.name}</option>
+                                    ))}
                                     <option value="__custom__">+ Custom name...</option>
                                   </select>
                                   {isCustomFrame && (
@@ -456,6 +452,9 @@ export default function AdminProductsManager() {
                                       placeholder="Enter custom frame style name"
                                       className="w-full rounded-xl border border-[#d4a574] bg-white px-4 py-2.5 text-sm text-[#1a1614] outline-none transition placeholder:text-[#a89a8e]"
                                     />
+                                  )}
+                                  {frames.length === 0 && (
+                                    <p className="text-xs text-[#a89a8e]">No frame styles yet — create them in the Frame Styles section below.</p>
                                   )}
                                 </div>
                               </div>
