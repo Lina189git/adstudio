@@ -68,7 +68,7 @@ export default async function HomePage() {
                 <Star className="h-4 w-4 fill-[#d4a574] text-[#d4a574]" />Product advertisement platform
               </div>
               <h1 className="text-5xl font-bold leading-tight tracking-tight md:text-6xl">
-                Turn products into<br /><span className="text-[#d4a574]">viral video ads</span>
+                Turn products into<br /><span className="text-[#d4a574]">video ads</span>
               </h1>
               <p className="mt-6 text-xl text-white/70">
                 Connect brands with talented video creators. Influencers apply, receive free samples, create authentic videos, and earn commission.

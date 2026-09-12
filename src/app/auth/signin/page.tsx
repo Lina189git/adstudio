@@ -63,7 +63,7 @@ export default async function SignInPage({
               </span>
               <h2 className="mt-5 text-4xl font-bold leading-[1.15] text-white">
                 Turn products into<br />
-                <span className="text-[#d4a574]">viral video ads.</span>
+                <span className="text-[#d4a574]"> video ads.</span>
               </h2>
               <p className="mt-4 text-base leading-relaxed text-white/55">
                 Apply for free samples, create authentic content,<br />
