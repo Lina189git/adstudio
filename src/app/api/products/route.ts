@@ -39,10 +39,6 @@ export async function GET(request: NextRequest) {
         where,
         include: {
           category: true,
-          variants: {
-            where: { isActive: true },
-            orderBy: { priceCents: 'asc' },
-          },
         },
         skip,
         take: limit,

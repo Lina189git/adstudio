@@ -19,13 +19,6 @@ export async function GET(request: Request, { params }: RouteParams) {
       },
       include: {
         category: true,
-        variants: {
-          where: { isActive: true },
-          orderBy: { priceCents: 'asc' },
-        },
-        _count: {
-          select: { orderItems: true },
-        },
       },
     });
 
