@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
         name,
         email,
         password: hashedPassword,
-        role: email === "admin@oilpaint.com" ? "ADMIN" : "INFLUENCER",
+        role: email === (process.env.ADMIN_EMAIL ?? "").toLowerCase() ? "ADMIN" : "INFLUENCER",
       },
       select: {
         id: true,
