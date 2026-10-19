@@ -55,6 +55,7 @@ export async function GET(request: NextRequest) {
               cartItems: true,
             },
           },
+          directMessages: { where: { senderRole: "USER", isRead: false }, select: { id: true } },
         },
         skip,
         take: limit,
@@ -63,8 +64,13 @@ export async function GET(request: NextRequest) {
       prisma.user.count({ where }),
     ]);
 
+    const usersWithUnread = users.map(({ directMessages, ...u }) => ({
+      ...u,
+      unreadMessages: directMessages.length,
+    }));
+
     return NextResponse.json({
-      users,
+      users: usersWithUnread,
       pagination: {
         page,
         limit,

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, RefreshCw, Save } from "lucide-react";
+import { Loader2, MessageCircle, RefreshCw, Save } from "lucide-react";
+import MessageThread from "@/components/shared/MessageThread";
 
 interface UserRecord {
   id: string;
@@ -14,6 +15,7 @@ interface UserRecord {
     orders: number;
     cartItems: number;
   };
+  unreadMessages?: number;
 }
 
 interface UserStats {
@@ -284,9 +286,16 @@ export default function AdminUsersManager() {
                         </p>
                         <p className="mt-1 text-sm text-[#6b5d54]">{user.email}</p>
                       </div>
-                      <span className="rounded-full bg-[#1a1614] px-3 py-1 text-xs font-semibold text-white">
-                        {user.role}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        {!!user.unreadMessages && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-[#d4a574]/40 bg-[#d4a574]/10 px-2.5 py-1 text-xs font-semibold text-[#8c5a1f]">
+                            <MessageCircle className="h-3 w-3" />{user.unreadMessages} new
+                          </span>
+                        )}
+                        <span className="rounded-full bg-[#1a1614] px-3 py-1 text-xs font-semibold text-white">
+                          {user.role}
+                        </span>
+                      </div>
                     </div>
                     <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#8c7764]">
                       <span>{user._count.orders} orders</span>
@@ -397,6 +406,17 @@ export default function AdminUsersManager() {
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Save user updates
               </button>
+
+              <div>
+                <p className="mb-2 text-xs font-bold uppercase tracking-wider text-[#8c7764]">Direct message</p>
+                <MessageThread
+                  key={selectedUser.id}
+                  endpoint={`/api/admin/users/${selectedUser.id}/messages`}
+                  role="ADMIN"
+                  otherPartyLabel={selectedUser.name || selectedUser.email}
+                  emptyHint="No messages yet. Send this user a note — they'll see it on their account page."
+                />
+              </div>
             </div>
           )}
         </div>

@@ -5,11 +5,13 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 
 import AppHeader from "@/components/painting-order/AppHeader";
+import MessageThread from "@/components/shared/MessageThread";
 import {
   ArrowLeft,
   Calendar,
   KeyRound,
   Mail,
+  MessageCircle,
   Settings,
   ShoppingCart,
   User,
@@ -292,6 +294,19 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div className="bg-white rounded-[1.75rem] border-2 border-[#eadfcb] p-6 shadow-[0_10px_30px_rgba(26,22,20,0.06)]">
+              <h2 className="text-xl font-semibold text-[#1a1614] mb-4 flex items-center gap-2">
+                <MessageCircle className="w-5 h-5" />
+                Messages
+              </h2>
+              <MessageThread
+                endpoint="/api/account/messages"
+                role="USER"
+                otherPartyLabel="support"
+                emptyHint="No messages yet. If you have a question, send our team a note here."
+              />
             </div>
 
             <div className="bg-white rounded-[1.75rem] border-2 border-[#eadfcb] p-6 shadow-[0_10px_30px_rgba(26,22,20,0.06)]">

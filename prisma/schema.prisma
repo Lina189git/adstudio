@@ -204,6 +204,8 @@ model User {
   adTasks            AdTask[]           @relation("InfluencerTasks")
   videoSubmissions   VideoSubmission[]  @relation("InfluencerVideos")
   sentMessages       Message[]          @relation("MessageSender")
+  directMessages     DirectMessage[]    @relation("UserDirectMessages")
+  sentDirectMessages DirectMessage[]    @relation("DirectMessageSender")
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 }
@@ -391,6 +393,20 @@ model Message {
   createdAt  DateTime          @default(now())
 }
 
+// Admin ↔ any-user support chat, independent of ad tasks. One thread per
+// user (keyed by userId); any admin can reply into it.
+model DirectMessage {
+  id         String                  @id @default(cuid()) @map("_id")
+  userId     String
+  user       User                    @relation("UserDirectMessages", fields: [userId], references: [id], onDelete: Cascade)
+  senderId   String
+  sender     User                    @relation("DirectMessageSender", fields: [senderId], references: [id])
+  senderRole DirectMessageSenderRole
+  body       String
+  isRead     Boolean                 @default(false)
+  createdAt  DateTime                @default(now())
+}
+
 model CommissionPayment {
   id           String        @id @default(cuid()) @map("_id")
   taskId       String        @unique
@@ -473,4 +489,9 @@ enum PaymentStatus {
 enum MessageSenderRole {
   ADMIN
   INFLUENCER
+}
+
+enum DirectMessageSenderRole {
+  ADMIN
+  USER
 }

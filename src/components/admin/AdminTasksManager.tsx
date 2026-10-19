@@ -7,6 +7,7 @@ import {
   MapPin, MessageCircle, Package, RefreshCw, Truck, Video,
 } from "lucide-react";
 import MessageThread from "@/components/shared/MessageThread";
+import { ADMIN_MESSAGE_TEMPLATES } from "@/lib/messageTemplates";
 
 type ShippingAddr = {
   name?: string; address1?: string; address2?: string;
@@ -479,9 +480,10 @@ export default function AdminTasksManager() {
                       <div className="mt-5">
                         <p className="mb-2 text-xs font-bold uppercase tracking-wider text-[#8c7764]">Messages</p>
                         <MessageThread
-                          taskId={task.id}
+                          endpoint={`/api/admin/tasks/${task.id}/messages`}
                           role="ADMIN"
                           otherPartyLabel={task.influencer.name || task.influencer.email}
+                          templates={ADMIN_MESSAGE_TEMPLATES}
                         />
                       </div>
 

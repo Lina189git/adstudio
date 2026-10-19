@@ -261,17 +261,13 @@ function CommissionPanel({ task, onDispute }: { task: Task; onDispute: () => voi
                 <p className="text-xs text-amber-700">Our team will review your request and get back to you shortly.</p>
               </div>
             </div>
-          ) : payment.status === "PAID" ? (
-            <p className="text-xs text-[#a89a8e]">
-              Payment has been issued. To dispute a paid commission, contact{" "}
-              <a href="mailto:support@adstudio.com" className="text-[#d4a574] underline">support@adstudio.com</a>.
-            </p>
           ) : (
             <button
               onClick={onDispute}
               className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-xs font-semibold text-red-700 transition hover:bg-red-100"
             >
-              <RotateCcw className="h-3.5 w-3.5" />Request refund / dispute commission
+              <RotateCcw className="h-3.5 w-3.5" />
+              {payment.status === "PAID" ? "Dispute this payment" : "Request refund / dispute commission"}
             </button>
           )}
         </div>
@@ -509,7 +505,7 @@ export default function TaskDetail({ taskId }: { taskId: string }) {
         </div>
 
         {/* ── Messages from the brand ── */}
-        <MessageThread taskId={taskId} role="INFLUENCER" otherPartyLabel="the brand" />
+        <MessageThread endpoint={`/api/influencer/tasks/${taskId}/messages`} role="INFLUENCER" otherPartyLabel="the brand" />
 
         {/* ── Shipment timeline ── */}
         <div className="rounded-[1.75rem] border border-[#eadfcb] bg-white p-6">

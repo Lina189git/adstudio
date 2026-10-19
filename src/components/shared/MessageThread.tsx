@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Loader2, MessageCircle, Send, Sparkles } from "lucide-react";
-import { ADMIN_MESSAGE_TEMPLATES } from "@/lib/messageTemplates";
+import type { MessageTemplate } from "@/lib/messageTemplates";
 
 type Sender = { id: string; name: string | null; email: string; image: string | null };
+type Role = "ADMIN" | "INFLUENCER" | "USER";
 type Message = {
   id: string;
   body: string;
-  senderRole: "ADMIN" | "INFLUENCER";
+  senderRole: Role;
   createdAt: string;
   sender: Sender;
 };
@@ -17,15 +18,22 @@ const fmtTime = (d: string) =>
   new Date(d).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 
 export default function MessageThread({
-  taskId,
+  endpoint,
   role,
   otherPartyLabel,
+  templates,
+  emptyHint,
 }: {
-  taskId: string;
+  /** Base API route for this thread's GET (fetch + mark-read) and POST (send). */
+  endpoint: string;
   /** Which side of the conversation the current viewer is on. */
-  role: "ADMIN" | "INFLUENCER";
+  role: Role;
   /** Display name for the other party, e.g. the influencer's name or "the brand". */
   otherPartyLabel?: string;
+  /** Optional quick-select canned messages shown to ADMIN viewers. */
+  templates?: MessageTemplate[];
+  /** Override the "no messages yet" hint text. */
+  emptyHint?: string;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,11 +43,9 @@ export default function MessageThread({
   const [showTemplates, setShowTemplates] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const base = role === "ADMIN" ? `/api/admin/tasks/${taskId}/messages` : `/api/influencer/tasks/${taskId}/messages`;
-
   const load = async () => {
     try {
-      const res = await fetch(base);
+      const res = await fetch(endpoint);
       const data = await res.json();
       if (res.ok) setMessages(data.messages || []);
     } catch {
@@ -52,7 +58,7 @@ export default function MessageThread({
   useEffect(() => {
     void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [taskId]);
+  }, [endpoint]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: "nearest" });
@@ -64,7 +70,7 @@ export default function MessageThread({
     setSending(true);
     setError("");
     try {
-      const res = await fetch(base, {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ body }),
@@ -96,7 +102,7 @@ export default function MessageThread({
           </div>
         ) : messages.length === 0 ? (
           <p className="py-6 text-center text-xs text-[#a89a8e]">
-            No messages yet. {role === "ADMIN" ? "Send a note to guide the influencer." : "The brand hasn't messaged you yet."}
+            {emptyHint || (role === "ADMIN" ? "No messages yet. Send a note to get the conversation started." : "No messages yet.")}
           </p>
         ) : (
           messages.map((m) => {
@@ -108,7 +114,7 @@ export default function MessageThread({
                 }`}>
                   <p className="whitespace-pre-line leading-relaxed">{m.body}</p>
                   <p className={`mt-1 text-[10px] ${mine ? "text-white/60" : "text-[#a89a8e]"}`}>
-                    {m.senderRole === "ADMIN" ? "Brand" : m.sender.name || "Influencer"} · {fmtTime(m.createdAt)}
+                    {m.senderRole === "ADMIN" ? "Admin" : m.sender.name || m.sender.email} · {fmtTime(m.createdAt)}
                   </p>
                 </div>
               </div>
@@ -122,7 +128,7 @@ export default function MessageThread({
 
       {/* Composer */}
       <div className="border-t border-[#eadfcb] p-3 space-y-2">
-        {role === "ADMIN" && (
+        {role === "ADMIN" && templates && templates.length > 0 && (
           <div>
             <button
               type="button"
@@ -133,7 +139,7 @@ export default function MessageThread({
             </button>
             {showTemplates && (
               <div className="mt-2 flex flex-wrap gap-1.5">
-                {ADMIN_MESSAGE_TEMPLATES.map((t) => (
+                {templates.map((t) => (
                   <button
                     key={t.label}
                     type="button"
@@ -159,7 +165,7 @@ export default function MessageThread({
                 void send();
               }
             }}
-            placeholder={role === "ADMIN" ? "Message the influencer… (Enter to send)" : "Message the brand… (Enter to send)"}
+            placeholder={otherPartyLabel ? `Message ${otherPartyLabel}… (Enter to send)` : "Type a message… (Enter to send)"}
             className="flex-1 resize-none rounded-xl border border-[#eadfcb] bg-[#faf6ef] px-3 py-2.5 text-sm outline-none focus:border-[#d4a574]"
           />
           <button
