@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { CheckCircle, Clock, Loader2, Package, Truck, Video } from "lucide-react";
+import { CheckCircle, Clock, Loader2, MessageCircle, Package, Truck, Video } from "lucide-react";
 
 type Product = { id: string; name: string; imageUrl: string | null; commissionType: string; commissionRate: number; commissionFixed: number };
 type Task = {
@@ -11,6 +11,7 @@ type Task = {
   application: { product: Product; sample: { status: string; trackingNumber: string | null } | null };
   videos: { id: string; title: string; status: string }[];
   payment: { status: string; amountCents: number } | null;
+  unreadMessages?: number;
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -69,7 +70,14 @@ export default function InfluencerTasksList() {
             <p className="text-xs font-semibold text-emerald-700">{money(task.payment.amountCents)} earned · {task.payment.status}</p>
           )}
         </div>
-        <span className={`shrink-0 rounded-full border px-3 py-1 text-xs font-semibold ${sc}`}>{task.status.replace("_", " ")}</span>
+        <div className="flex shrink-0 flex-col items-end gap-1.5">
+          <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${sc}`}>{task.status.replace("_", " ")}</span>
+          {!!task.unreadMessages && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-[#d4a574]/40 bg-[#d4a574]/10 px-2 py-0.5 text-[10px] font-semibold text-[#8c5a1f]">
+              <MessageCircle className="h-2.5 w-2.5" />{task.unreadMessages} new
+            </span>
+          )}
+        </div>
       </Link>
     );
   };

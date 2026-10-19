@@ -22,8 +22,11 @@ export async function GET() {
       },
       videos: { select: { id: true, title: true, status: true, createdAt: true } },
       payment: { select: { status: true, amountCents: true } },
+      messages: { where: { senderRole: "ADMIN", isRead: false }, select: { id: true } },
     },
   });
 
-  return NextResponse.json({ tasks });
+  const withUnread = tasks.map(({ messages, ...t }) => ({ ...t, unreadMessages: messages.length }));
+
+  return NextResponse.json({ tasks: withUnread });
 }

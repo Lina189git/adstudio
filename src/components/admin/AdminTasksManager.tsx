@@ -4,8 +4,9 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import {
   CheckCircle, ChevronDown, ChevronUp, Clock, Loader2,
-  MapPin, Package, RefreshCw, Truck, Video,
+  MapPin, MessageCircle, Package, RefreshCw, Truck, Video,
 } from "lucide-react";
+import MessageThread from "@/components/shared/MessageThread";
 
 type ShippingAddr = {
   name?: string; address1?: string; address2?: string;
@@ -29,6 +30,7 @@ type Task = {
   application: { product: Product; sample: Sample };
   videos: Video[];
   payment: { status: string; amountCents: number } | null;
+  unreadMessages?: number;
 };
 
 const TASK_BADGE: Record<string, { cls: string; label: string }> = {
@@ -232,6 +234,13 @@ export default function AdminTasksManager() {
                         <Video className="mr-0.5 inline h-3 w-3" />{task.videos.length} video{task.videos.length !== 1 ? "s" : ""}
                       </span>
                     </div>
+
+                    {/* Unread messages */}
+                    {!!task.unreadMessages && (
+                      <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#d4a574]/40 bg-[#d4a574]/10 px-2.5 py-1 text-xs font-semibold text-[#8c5a1f]">
+                        <MessageCircle className="h-3 w-3" />{task.unreadMessages} new
+                      </span>
+                    )}
 
                     {/* Expand */}
                     <button
@@ -464,6 +473,16 @@ export default function AdminTasksManager() {
                             </p>
                           )}
                         </div>
+                      </div>
+
+                      {/* ── Messages ─────────────────────────────────────── */}
+                      <div className="mt-5">
+                        <p className="mb-2 text-xs font-bold uppercase tracking-wider text-[#8c7764]">Messages</p>
+                        <MessageThread
+                          taskId={task.id}
+                          role="ADMIN"
+                          otherPartyLabel={task.influencer.name || task.influencer.email}
+                        />
                       </div>
 
                       {/* Save button */}

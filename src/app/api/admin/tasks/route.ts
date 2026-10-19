@@ -38,10 +38,13 @@ export async function GET(request: NextRequest) {
         },
         videos: { select: { id: true, title: true, status: true, createdAt: true } },
         payment: true,
+        messages: { where: { senderRole: "INFLUENCER", isRead: false }, select: { id: true } },
       },
     }),
     prisma.adTask.count({ where }),
   ]);
 
-  return NextResponse.json({ tasks, pagination: { page, pages: Math.ceil(total / limit), total } });
+  const withUnread = tasks.map(({ messages, ...t }) => ({ ...t, unreadMessages: messages.length }));
+
+  return NextResponse.json({ tasks: withUnread, pagination: { page, pages: Math.ceil(total / limit), total } });
 }

@@ -7,6 +7,7 @@ import {
   UploadCloud, Video,
 } from "lucide-react";
 import AgreementCard from "@/components/AgreementCard";
+import MessageThread from "@/components/shared/MessageThread";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -506,6 +507,9 @@ export default function TaskDetail({ taskId }: { taskId: string }) {
             </div>
           </div>
         </div>
+
+        {/* ── Messages from the brand ── */}
+        <MessageThread taskId={taskId} role="INFLUENCER" otherPartyLabel="the brand" />
 
         {/* ── Shipment timeline ── */}
         <div className="rounded-[1.75rem] border border-[#eadfcb] bg-white p-6">

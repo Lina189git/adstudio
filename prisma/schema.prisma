@@ -203,6 +203,7 @@ model User {
   applications       AdApplication[]    @relation("InfluencerApplications")
   adTasks            AdTask[]           @relation("InfluencerTasks")
   videoSubmissions   VideoSubmission[]  @relation("InfluencerVideos")
+  sentMessages       Message[]          @relation("MessageSender")
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 }
@@ -354,6 +355,7 @@ model AdTask {
   deadline      DateTime?
   status        TaskStatus  @default(ACTIVE)
   videos        VideoSubmission[]
+  messages      Message[]
   payment       CommissionPayment?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -375,6 +377,18 @@ model VideoSubmission {
   isPublic      Boolean     @default(false)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+}
+
+model Message {
+  id         String            @id @default(cuid()) @map("_id")
+  taskId     String
+  task       AdTask            @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  senderId   String
+  sender     User              @relation("MessageSender", fields: [senderId], references: [id])
+  senderRole MessageSenderRole
+  body       String
+  isRead     Boolean           @default(false)
+  createdAt  DateTime          @default(now())
 }
 
 model CommissionPayment {
@@ -454,4 +468,9 @@ enum PaymentStatus {
   APPROVED
   PAID
   FAILED
+}
+
+enum MessageSenderRole {
+  ADMIN
+  INFLUENCER
 }
